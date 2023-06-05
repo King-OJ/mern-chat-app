@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import FormRow from '../components/FormRow'
 import { BsCheck } from 'react-icons/bs'
+import { useAppContext } from '../context/appContext'
+import { toast } from 'react-toastify'
 
 export default function Register() {
 
@@ -20,15 +22,49 @@ export default function Register() {
   ]
 
   const details = {
-    isMember: false
+    isMember: false,
+    username: '',
+    email: '',
+    country: '',
+    password: '',
   }
 
   const [visitor, setVisitor] = useState(details)
 
+  const {
+    userLoading,
+    registerUser,
+    loginUser
+  } = useAppContext()
+
+  function handleChange(e){
+    const name = e.target.name
+    const value = e.target.value
+    setVisitor({...visitor, [name]: value})
+  }
+
+  function handleSubmit(e){
+    e.preventDefault()
+    const { username, email, country, password } = visitor
+    if(visitor.isMember){
+      if(!email || !password){
+        toast.error('Please fill out all fields!')
+        return;
+      }
+      loginUser({ email, password})
+      return;
+    }
+    if(!email || !password || !country || !username){
+      toast.error('Please fill out all fields!')
+      return;
+    }
+    registerUser({username, email, country, password })
+  }
+
   return (
     <section className='h-screen w-screen'>
       <div className="page h-full flex justify-center">
-        <div className="h-[80%] my-auto w-full">
+        <div className="h-[80%] min-h-[600px] my-auto w-full">
           
           <div className="flip-box h-full w-[90%] mx-auto relative max-w-6xl rounded-md bg-white shadow-md">  
             
@@ -58,15 +94,16 @@ export default function Register() {
                   
                 {/* front child box */}
                 <div className="w-full sm:w-[60%] h-full px-3 sm:px-6 md:px-12">
-                  <form className="flex h-full flex-col justify-center">
-                    <h2 className='mb-10 text-4xl tracking-widest font-extrabold text-center  inline-block text-transparent bg-clip-text bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]'>Trekkers</h2>
+                  <form onSubmit={handleSubmit} className="flex h-full flex-col justify-center">
+                    <h2 className='mb-10 text-3xl sm:text-4xl tracking-widest font-extrabold text-center  inline-block text-transparent bg-clip-text bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]'>Trekkers</h2>
                     <h3 className='font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Create your account</h3>
                     <div className="relative space-y-10 md:space-y-14">
-                    <FormRow label='username' name='username' type='text' value='' />
-                    <FormRow label='email' name='email' type='email' value='' />
-                    <FormRow label='password' name='password' type='password' value='' />
+                    <FormRow label='username' name='username' type='text' value={visitor.username} handleChange={handleChange}/>
+                    <FormRow label='country' name='country' type='text' value={visitor.country} handleChange={handleChange}/>
+                    <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
+                    <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex gap-1">Already have an account?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Login</span></div>
-                    <button type='submit' className='bg-[#735FCD] text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Sign Up</button>
+                    <button type='submit' className='bg-[#735FCD] text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account</button>
                     </div>
                   </form>
                 </div>
@@ -95,12 +132,12 @@ export default function Register() {
                   
                 {/* back child box */}
                 <div className="w-full sm:w-[60%] h-full px-3 sm:px-6 md:px-12">
-                  <form className="flex h-full flex-col justify-center">
+                  <form onSubmit={handleSubmit} className="flex h-full flex-col justify-center">
                     <h2 className='mb-10 text-4xl tracking-widest font-extrabold text-center  inline-block text-transparent bg-clip-text bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]'>Trekkers</h2>
                     <h3 className='font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Login to your account</h3>
                     <div className="space-y-10 md:space-y-14">
-                    <FormRow label='email' name='email' type='email' value='' />
-                    <FormRow label='password' name='password' type='password' value='' />
+                    <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
+                    <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex  gap-1">Don't have an account yet?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Sign Up</span></div>
                     <button type='submit' className='bg-[#735FCD] text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login</button>
                     </div>

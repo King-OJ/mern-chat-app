@@ -10,6 +10,14 @@ h1,h2,h3,h4 {
   @apply text-lg  sm:text-xl md:text-2xl;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+-webkit-text-fill-color: #3c3c3f;
+background-color: transparent;
+transition: background-color 5000s ease-in-out 0s;
+}
+
 .page {
   @apply container mx-auto px-2 sm:px-0;
 }
