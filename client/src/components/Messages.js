@@ -10,9 +10,6 @@ export default function Messages() {
         el.current.scrollIntoView({ block: 'end', behavior: "smooth" })
     }, [messages])
 
-    
-    
-
   return (
     <div className='absolute top-3 bottom-16 right-3 left-3 overflow-y-auto messages'>
         <div className="flex flex-col gap-3">

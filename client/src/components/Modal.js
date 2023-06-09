@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FaUser, FaTimes } from 'react-icons/fa'
+import { useAppContext } from '../context/appContext'
 
 export default function Modal({ closeModal, showModal }) {
-
+  const { user: { username, email } } = useAppContext 
   return (
     <div className='absolute inset-0 z-10 bg-neutral-800 h-full bg-opacity-60 w-screen'>
         <div className="flex justify-center items-center h-full w-full">
@@ -11,9 +12,9 @@ export default function Modal({ closeModal, showModal }) {
                 <FaTimes size={20}/>
                 </button>
                 <div className="mt-6 text-center flex flex-col items-center gap-10">
-                <div>username</div>
+                <div>{username}</div>
                 <FaUser size={40}/>
-                <div className="text-lg">Email: test@gmail.com </div>
+                <div className="text-lg">{`Email: ${email}`}</div>
                 </div>
             </div>
         </div>

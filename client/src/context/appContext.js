@@ -1,10 +1,13 @@
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useReducer} from "react";
+import { toast } from 'react-toastify'
+import axios from 'axios'
 import reducer from "./reducers";
-import { HANDLE_MSG_CHANGE, REGISTER_USER_BEGIN, SEND_MSG } from "./actions";
+import { CLEAR_ALERT, HANDLE_MSG_CHANGE, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG, SHOW_ALERT } from "./actions";
 
 const AppContext = createContext()
 
 const initialState = {
+    showAlert: false,
     user: null,
     userLoading: false,
     notifications: null,
@@ -91,13 +94,41 @@ const initialState = {
 
 export function AppProvider ({ children }){
 
+
+    //show toast container for success or error
+    const showAlert = (alertType, alertText)=>{
+        if (alertType === "success"){
+            toast.success(alertText)
+        }
+        else {
+            toast.error(alertText)
+        }
+    }
     
     const [ state, dispatch ] = useReducer(reducer, initialState)
     
     // register user
     const registerUser = async ( credentials )=>{
         dispatch({ type: REGISTER_USER_BEGIN })
-        console.log(credentials);
+        try {
+            const response = await axios.post('/api/v1/auth/sign-up', credentials)
+            const { data : { user } } = response
+            showAlert( 'success', 'Account created successfully! Redirecting!')
+            setTimeout(()=>{
+                dispatch( { type: REGISTER_USER_SUCCESS, payload: user })
+            }, 3000)
+        } catch (error) {
+            // console.log(error);
+            let text = typeof error.response.data.msg === 'object' 
+            ?  
+            error.response.data.msg.length > 1 ? error.response.data.msg.join(' , ') : error.response.data.msg[0]
+            :
+            error.response.data.msg
+            showAlert( 'error', text)
+
+            dispatch( { type: REGISTER_USER_ERROR })
+        }
+
     }
 
     // login user
