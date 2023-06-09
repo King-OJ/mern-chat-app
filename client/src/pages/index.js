@@ -1,9 +1,9 @@
-import Chat from './Chat'
+import Chats from './Chats'
 import Register from './Register'
 import Error from './Error'
 
 export {
-    Chat,
+    Chats,
     Register,
     Error
 }

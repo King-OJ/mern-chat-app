@@ -1,0 +1,37 @@
+{
+  "name": "mern-chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/King-OJ/mern-chat-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/King-OJ/mern-chat-app/issues"
+  },
+  "homepage": "https://github.com/King-OJ/mern-chat-app#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "http-status-codes": "^2.2.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.22",
+    "socket.io": "^4.6.2",
+    "xss-clean": "^0.1.4"
+  }
+}

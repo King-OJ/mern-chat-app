@@ -1,4 +1,4 @@
-import { REGISTER_USER_BEGIN } from "./actions";
+import { HANDLE_MSG_CHANGE, REGISTER_USER_BEGIN, SEND_MSG } from "./actions";
 
 export default function reducer(state, action){
     switch (action.type) {
@@ -7,7 +7,22 @@ export default function reducer(state, action){
                 ...state,
                 userLoading: true
             }
-    
+        case HANDLE_MSG_CHANGE:
+            return {
+                ...state,
+                newMsg: action.payload
+            }
+
+        case SEND_MSG:
+            const msg = { text: state.newMsg, myText: true}
+            
+            
+            return {
+                ...state,
+                messages: [...state.messages, msg],
+                newMsg: ''
+            }
+
         default:
             break;
     }

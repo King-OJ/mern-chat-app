@@ -3,6 +3,7 @@ import FormRow from '../components/FormRow'
 import { BsCheck } from 'react-icons/bs'
 import { useAppContext } from '../context/appContext'
 import { toast } from 'react-toastify'
+import Logo from '../components/Logo'
 
 export default function Register() {
 
@@ -95,15 +96,15 @@ export default function Register() {
                 {/* front child box */}
                 <div className="w-full sm:w-[60%] h-full px-3 sm:px-6 md:px-12">
                   <form onSubmit={handleSubmit} className="flex h-full flex-col justify-center">
-                    <h2 className='mb-10 text-3xl sm:text-4xl tracking-widest font-extrabold text-center  inline-block text-transparent bg-clip-text bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]'>Trekkers</h2>
-                    <h3 className='font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Create your account</h3>
+                    <Logo />
+                    <h3 className='mt-10 font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Create your account</h3>
                     <div className="relative space-y-10 md:space-y-14">
                     <FormRow label='username' name='username' type='text' value={visitor.username} handleChange={handleChange}/>
                     <FormRow label='country' name='country' type='text' value={visitor.country} handleChange={handleChange}/>
                     <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex gap-1">Already have an account?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Login</span></div>
-                    <button type='submit' className='bg-[#735FCD] text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account</button>
+                    <button disabled={userLoading} type='submit' className='bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account</button>
                     </div>
                   </form>
                 </div>
@@ -133,13 +134,13 @@ export default function Register() {
                 {/* back child box */}
                 <div className="w-full sm:w-[60%] h-full px-3 sm:px-6 md:px-12">
                   <form onSubmit={handleSubmit} className="flex h-full flex-col justify-center">
-                    <h2 className='mb-10 text-4xl tracking-widest font-extrabold text-center  inline-block text-transparent bg-clip-text bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]'>Trekkers</h2>
-                    <h3 className='font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Login to your account</h3>
+                    <Logo/>
+                    <h3 className='mt-10 font-semibold text-center mb-4 sm:mb-8 text-[#84899C]'>Login to your account</h3>
                     <div className="space-y-10 md:space-y-14">
                     <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex  gap-1">Don't have an account yet?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Sign Up</span></div>
-                    <button type='submit' className='bg-[#735FCD] text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login</button>
+                    <button disabled={userLoading} type='submit' className='bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login</button>
                     </div>
                   </form>
                 </div>

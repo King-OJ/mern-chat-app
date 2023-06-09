@@ -45,6 +45,15 @@ transition: background-color 5000s ease-in-out 0s;
   transform: rotateY(180deg);
 }
 
+.messages::-webkit-scrollbar {
+  display: none;
+}
+
+.messages {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 
 
 
