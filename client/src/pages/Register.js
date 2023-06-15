@@ -1,21 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+
 import FormRow from '../components/FormRow'
 import { useAppContext } from '../context/appContext'
 import { toast } from 'react-toastify'
 import Logo from '../components/Logo'
 import walkingImg from '../assets/images/walkingImg.svg'
+import Loader from '../components/Loader';
 
 export default function Register() {
-
-  const { user } = useAppContext()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if(user){
-      navigate('/')
-    }
-  }, [user])
   
 
   const features = [
@@ -35,7 +27,7 @@ export default function Register() {
   const [visitor, setVisitor] = useState(details)
 
   const {
-    userLoading,
+    formLoading,
     registerUser,
     loginUser
   } = useAppContext()
@@ -105,7 +97,7 @@ export default function Register() {
                     <FormRow id='loginEmail'  label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow id='loginPassword' label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex gap-1">Already have an account?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Login</span></div>
-                    <button disabled={userLoading} type='submit' className='bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account</button>
+                    <button disabled={formLoading} type='submit' className='flex gap-2 items-center justify-center bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account {formLoading && <Loader />}</button>
                     </div>
                   </form>
                 </div>
@@ -141,7 +133,7 @@ export default function Register() {
                     <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
                     <div className="text-xs sm:text-sm text-[#84899C] flex  gap-1">Don't have an account yet?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Sign Up</span></div>
-                    <button disabled={userLoading} type='submit' className='bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login</button>
+                    <button disabled={formLoading} type='submit' className='flex gap-2 items-center justify-center bg-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login {formLoading && <Loader />}</button>
                     </div>
                   </form>
                 </div>

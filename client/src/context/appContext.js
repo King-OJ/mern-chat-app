@@ -1,15 +1,19 @@
-import { createContext, useContext, useReducer} from "react";
+import { createContext, useContext, useEffect, useReducer} from "react";
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import reducer from "./reducers";
-import { CLEAR_ALERT, HANDLE_MSG_CHANGE, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG, SHOW_ALERT } from "./actions";
+import {  GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG } from "./actions";
+import { GET_CURRENT_USER_SUCCESS } from "./actions";
+import { GET_CURRENT_USER_BEGIN } from "./actions";
+import { useNavigate } from "react-router-dom";
 
-const AppContext = createContext()
 
-const initialState = {
+export const initialState = {
     showAlert: false,
+    userError: false,
     user: null,
     userLoading: false,
+    formLoading: false,
     notifications: null,
     newMsg: '',
     messages: [
@@ -92,8 +96,37 @@ const initialState = {
     ]
 }
 
+const AppContext = createContext()
+
 export function AppProvider ({ children }){
 
+    const authFetch = axios.create({
+        baseURL: '/api/v1',
+        // headers: {
+        //     Authorization: `Bearer ${state.token}`
+        // }
+    })
+
+    const navigate = useNavigate()
+
+    const getCurrentUser = async ()=>{
+        try {
+            dispatch({ type: GET_CURRENT_USER_BEGIN })
+            const response = await authFetch.get('/auth/getCurrentUser')
+            const { data : { user } } = response 
+            dispatch( { type: GET_CURRENT_USER_SUCCESS, payload: user })
+        } catch (error) {
+            dispatch({ type: GET_CURRENT_USER_ERROR })
+            if(error.response.status !== 401) return;
+            logout()
+        }
+       
+    }
+
+    useEffect(() => {
+        getCurrentUser()
+      }, [])
+    
 
     //show toast container for success or error
     const showAlert = (alertType, alertText)=>{
@@ -111,11 +144,12 @@ export function AppProvider ({ children }){
     const registerUser = async ( credentials )=>{
         dispatch({ type: REGISTER_USER_BEGIN })
         try {
-            const response = await axios.post('/api/v1/auth/sign-up', credentials)
+            const response = await authFetch.post('/auth/sign-up', credentials)
             const { data : { user } } = response
             showAlert( 'success', 'Account created successfully! Redirecting!')
+            dispatch( { type: REGISTER_USER_SUCCESS, payload: user })
             setTimeout(()=>{
-                dispatch( { type: REGISTER_USER_SUCCESS, payload: user })
+                navigate('/')
             }, 3000)
         } catch (error) {
             // console.log(error);
@@ -133,7 +167,38 @@ export function AppProvider ({ children }){
 
     // login user
     const loginUser = async ( credentials )=>{
-        console.log(credentials);
+        dispatch({ type: LOGIN_USER_BEGIN })
+        try {
+            const response = await authFetch.post('/auth/login', credentials)
+            const { data : { user } } = response
+            showAlert( 'success', 'Login successful! Redirecting!')
+            dispatch( { type: LOGIN_USER_SUCCESS, payload: user })
+            setTimeout(()=>{
+                navigate('/')
+            }, 3000)
+        } catch (error) {
+            let text = typeof error.response.data.msg === 'object' 
+            ?  
+            error.response.data.msg.length > 1 ? error.response.data.msg.join(' , ') : error.response.data.msg[0]
+            :
+            error.response.data.msg
+            showAlert( 'error', text)
+
+            dispatch( { type: LOGIN_USER_ERROR })
+        }
+    }
+
+    //logout user
+    const logout = async ()=>{
+        try {
+            const response = await authFetch.get('/auth/logout') 
+            const { data : { msg } } = response
+            toast.success(msg)
+        } catch (error) {
+            console.log(error);  
+        } finally {
+            dispatch({type: LOGOUT_USER}) 
+        }
     }
 
     //handle message change
@@ -153,7 +218,9 @@ export function AppProvider ({ children }){
             registerUser,
             loginUser,
             handleMsgChng,
-            sendMsg
+            sendMsg, 
+            getCurrentUser,
+            logout
         }}>
             {children}
         </AppContext.Provider>

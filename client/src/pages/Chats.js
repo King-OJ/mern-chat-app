@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Search from '../components/Search'
 import Logo from '../components/Logo'
 import { FaBell, FaUser, FaAngleDown } from 'react-icons/fa'
 import ChatList from '../components/ChatList'
 import Chat from '../components/Chat'
 import Modal from '../components/Modal'
+import { useAppContext } from '../context/appContext'
 
 export default function Chats() {
+
+  const { logout } = useAppContext()
+
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
+  
 
   return (
     <section className='sm:px-6 md:px-10 relative h-screen'>
@@ -47,7 +52,7 @@ export default function Chats() {
                     setShowModal(true)
                   }, 300)
                   }} className="w-full rounded-tl-md rounded-tr-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">My Profile</button>
-                <button className="w-full rounded-bl-md rounded-br-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">Log out</button>
+                <button onClick={()=>logout()} className="w-full rounded-bl-md rounded-br-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">Log out</button>
               </div>}
             </div>
 
