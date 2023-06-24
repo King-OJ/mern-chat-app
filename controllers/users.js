@@ -51,7 +51,7 @@ export const loginUser = async (req, res)=>{
 }
 
 export const getUsers = async (req, res)=>{
-    console.log(req.query)
+    // console.log(req.query)
     const { search } = req.query
     
     let result

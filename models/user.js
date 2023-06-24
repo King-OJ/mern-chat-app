@@ -33,6 +33,7 @@ const UserSchema = new mongoose.Schema({
         required: [true,"Please Provide Password"],
         minlength: 5,
         trim: true,
+        select: false
       },
       country: {
         type: String,

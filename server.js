@@ -18,7 +18,8 @@ import notFoundMiddleware from './middlewares/notFound.js';
 import errorHandlerMiddleware from './middlewares/errorHandler.js';
 
 //routes
-import authRouter from './routes/auth.js'
+import authRouter from './routes/user.js'
+import chatRouter from './routes/chat.js'
 
 //database
 import connectDB from './db/connectDB.js';
@@ -44,6 +45,7 @@ app.use(cookieParser())
 
 //auth routes
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/chat', chatRouter)
 
 //error for undefined routes
 app.use(notFoundMiddleware)
@@ -79,9 +81,12 @@ start()
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-    console.log(socket.id);
+    // console.log(socket);
     socket.on('chat message', (msg)=> {
-        console.log(`a user sent: ${msg}`);
+        console.log(`a user with id: ${socket.id} sent: ${msg}`);
+    })
+    socket.on('disconnect', ()=> {
+      console.log('A user disconnected')
     })
   })
 

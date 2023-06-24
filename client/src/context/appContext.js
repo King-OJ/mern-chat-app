@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useReducer} from "react";
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import reducer from "./reducers";
-import {  GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG } from "./actions";
+import {  GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG } from "./actions";
 import { GET_CURRENT_USER_SUCCESS } from "./actions";
 import { GET_CURRENT_USER_BEGIN } from "./actions";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,15 @@ export const initialState = {
     showAlert: false,
     userError: false,
     user: null,
+    search: '',
     userLoading: false,
+    allUsersLoading: false,
     formLoading: false,
+    openedChat: '',
     notifications: null,
     newMsg: '',
+    selectedChatID: '',
+    allUsers: [],
     messages: [
         {
             myText: true,
@@ -117,14 +122,17 @@ export function AppProvider ({ children }){
             dispatch( { type: GET_CURRENT_USER_SUCCESS, payload: user })
         } catch (error) {
             dispatch({ type: GET_CURRENT_USER_ERROR })
-            if(error.response.status !== 401) return;
-            logout()
+            if(error.response.status === 401){
+                logout();
+            }
+            
         }
        
     }
 
     useEffect(() => {
-        getCurrentUser()
+        getCurrentUser();
+        // eslint-disable-next-line 
       }, [])
     
 
@@ -193,22 +201,51 @@ export function AppProvider ({ children }){
         try {
             const response = await authFetch.get('/auth/logout') 
             const { data : { msg } } = response
-            toast.success(msg)
+            return msg;
         } catch (error) {
-            console.log(error);  
+            console.log(error)
+            showAlert('error', 'something went wrong!')  
         } finally {
             dispatch({type: LOGOUT_USER}) 
         }
     }
+
+    //get all users
+    const getUsers = async ()=>{
+        let url = '/auth/getUsers'
+        if(state.search){
+            url= `/auth/getUsers?search=${state.search}`
+        }
+        dispatch({ type: GET_ALL_USERS_BEGIN})
+        try {
+            const response = await authFetch.get(url) 
+            const { data : { users } } = response
+            dispatch({ type: GET_ALL_USERS_SUCCESS, payload: users})
+        } catch (error) {
+            showAlert('error', 'Something went wrong! Try again!')
+            dispatch({ type: GET_ALL_USERS_ERROR}) 
+        } 
+    }
+
 
     //handle message change
     const handleMsgChng = (text)=>{
         dispatch({type: HANDLE_MSG_CHANGE, payload:text})
     }
 
+    //handle search change
+    const handleSearchChng = (text)=>{
+        dispatch({type: HANDLE_SEARCH_CHANGE, payload:text})
+    }
+
     //send msg
     const sendMsg = ()=>{
         dispatch({ type:SEND_MSG })
+    }
+
+    //to open a chat
+    const openChat = (chatId)=>{
+        dispatch({type: OPEN_CHAT, payload: chatId})
     }
 
 
@@ -218,9 +255,13 @@ export function AppProvider ({ children }){
             registerUser,
             loginUser,
             handleMsgChng,
+            handleSearchChng,
             sendMsg, 
             getCurrentUser,
-            logout
+            logout,
+            openChat,
+            getUsers,
+            showAlert
         }}>
             {children}
         </AppContext.Provider>
