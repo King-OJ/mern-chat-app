@@ -9,24 +9,35 @@ import { useAppContext } from '../context/appContext'
 
 export default function Chats() {
 
-  const { logout, showAlert } = useAppContext()
+  const { logout, showAlert, user, openedChatUser } = useAppContext()
 
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
-  const [modalType, setModalType] = useState('profile')
+  const [modalType, setModalType] = useState('')
+
+  const openModal = (type)=>{
+    setModalType(type)
+    setIsModalOpen(true)
+    setTimeout(()=>{
+      setShowModal(true)
+    }, 300)
+    }
+
+  const closeModal = ()=>{
+    setShowModal(false)
+    setTimeout(()=>{
+      setShowLogout(false)
+      setIsModalOpen(false)
+    }, 300)
+    setModalType('')
+    }
   
 
   return (
     <section className='sm:px-6 md:px-10 relative h-screen'>
-      {isModalOpen && <Modal modalType={modalType} showModal={showModal} closeModal={()=>{
-        setShowModal(false)
-        setTimeout(()=>{
-          setShowLogout(false)
-          setIsModalOpen(false)
-        }, 300)
-        }} />}
+      {isModalOpen && <Modal modalType={modalType} showModal={showModal} closeModal={closeModal} user={user} />}
       <div className="max-w-7xl mx-auto px-4 relative h-full">
         <header className='h-[8%]'>
           <div className="flex justify-between items-center h-full">
@@ -35,32 +46,20 @@ export default function Chats() {
             </div>
             <Logo />
             <div className="flex gap-3 items-center relative">
-              <button onClick={()=>{
-                  setModalType('notification')
-                  setIsModalOpen(true)
-                  setTimeout(()=>{
-                    setShowModal(true)
-                  }, 300)
-                  }}><FaBell size={22}/></button>
+              <button onClick={()=>openModal('notification')} className='text-[#735FCD]'><FaBell size={22}/></button>
 
-              <div onClick={()=>setShowLogout(!showLogout)} className="flex gap-2 items-center px-3 py-[3px] rounded-md bg-[#b5b6b9] hover:shadow-lg  hover:bg-opacity-70 transition duration-200">
+              <div onClick={()=>setShowLogout(!showLogout)} className="flex gap-2 items-center px-3 py-[3px] rounded-md bg-white shadow-md  hover:bg-opacity-70 transition duration-200">
                 <button className="bg-[#e5e6e9] grid place-content-center overflow-hidden h-4 w-4 md:h-6 md:w-6 rounded-full">
-                  <FaUser size={22} className='mt-1'/>
+                  <FaUser size={22} className='mt-1 text-[#735FCD]'/>
                 </button>
                 <button >
-                  <FaAngleDown size={22}/>
+                  <FaAngleDown size={22} className='text-[#735FCD]'/>
                 </button>
               </div>
 
               {showLogout && 
-              <div className="bg-[#e5e6e9] rounded-md shadow-lg divide-black divide-y-2 absolute top-9 left-0 right-0">
-                <button onClick={()=>{
-                  setModalType('profile')
-                  setIsModalOpen(true)
-                  setTimeout(()=>{
-                    setShowModal(true)
-                  }, 300)
-                  }} className="w-full rounded-tl-md rounded-tr-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">My Profile</button>
+              <div className="bg-[#e5e6e9] text-[#735FCD] rounded-md shadow-lg divide-[#735FCD] divide-y-2 absolute top-9 left-0 right-0">
+                <button onClick={()=>openModal('profile')} className="w-full rounded-tl-md rounded-tr-md py-2 text-center  hover:bg-[#cdcdcf] transition duration-200">My Profile</button>
                 <button onClick={async ()=>{ await logout().then((msg)=> showAlert('success', msg) ) }} className="w-full rounded-bl-md rounded-br-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">Log out</button>
               </div>}
             </div>
@@ -74,8 +73,8 @@ export default function Chats() {
 
         <main className='h-[92%]'>
           <div className="my-10 h-full flex gap-8">
-            <ChatList />
-            <Chat />
+            <ChatList openModal={openModal}  />
+            <Chat openModal={openModal}/>
           </div>
         </main>
       </div>

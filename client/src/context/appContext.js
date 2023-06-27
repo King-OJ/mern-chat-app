@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useReducer} from "react";
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import reducer from "./reducers";
-import {  GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SEND_MSG } from "./actions";
+import {  GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG } from "./actions";
 import { GET_CURRENT_USER_SUCCESS } from "./actions";
 import { GET_CURRENT_USER_BEGIN } from "./actions";
 import { useNavigate } from "react-router-dom";
@@ -13,13 +13,17 @@ export const initialState = {
     userError: false,
     user: null,
     search: '',
+    searchSuggestions: [],
     userLoading: false,
     allUsersLoading: false,
     formLoading: false,
-    openedChat: '',
+    openedChatUser: null,
+    activeChatMate: null,
     notifications: null,
     newMsg: '',
+    selectedChatMateID: '',
     selectedChatID: '',
+    activeChats: [],
     allUsers: [],
     messages: [
         {
@@ -134,6 +138,8 @@ export function AppProvider ({ children }){
         getCurrentUser();
         // eslint-disable-next-line 
       }, [])
+
+
     
 
     //show toast container for success or error
@@ -211,11 +217,8 @@ export function AppProvider ({ children }){
     }
 
     //get all users
-    const getUsers = async ()=>{
-        let url = '/auth/getUsers'
-        if(state.search){
-            url= `/auth/getUsers?search=${state.search}`
-        }
+    const searchUsers = async ()=>{  
+        let url= `/auth/getUsers?search=${state.search}`
         dispatch({ type: GET_ALL_USERS_BEGIN})
         try {
             const response = await authFetch.get(url) 
@@ -243,6 +246,11 @@ export function AppProvider ({ children }){
         dispatch({ type:SEND_MSG })
     }
 
+    //select a chatmate
+    const selectChatMate = (id)=>{
+        dispatch({ type: SELECT_CHATMATE, payload: id })
+    }
+
     //to open a chat
     const openChat = (chatId)=>{
         dispatch({type: OPEN_CHAT, payload: chatId})
@@ -260,8 +268,9 @@ export function AppProvider ({ children }){
             getCurrentUser,
             logout,
             openChat,
-            getUsers,
-            showAlert
+            searchUsers,
+            showAlert,
+            selectChatMate
         }}>
             {children}
         </AppContext.Provider>

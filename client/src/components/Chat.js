@@ -5,10 +5,10 @@ import { useAppContext } from '../context/appContext'
 import { toast } from 'react-toastify'
 import { socket } from '../socket'
 
-export default function Chat() {
+export default function Chat({ openModal }) {
   
 
-  const { newMsg, handleMsgChng, selectedChatID, openedChat } = useAppContext()
+  const { newMsg, handleMsgChng, selectedChatID, openedChatUser } = useAppContext()
   
   function sendMsg(msg){
     console.log(msg);
@@ -33,17 +33,17 @@ export default function Chat() {
     <div className='flex-1 h-[90%]'>
       <header>
         <div className="flex justify-between items-center">
-          <button className='lg:hidden bg-[#e5e6e9] p-2 rounded-md hover:bg-opacity-70 transition'>
-            <FaArrowLeft size={16} />
+          <button className='lg:hidden bg-white p-2 rounded-md hover:bg-opacity-70 transition'>
+            <FaArrowLeft size={16} className='text-[#735FCD]'/>
           </button>
-          <h6 className='font-semibold'>{openedChat?.username}</h6>
-          <button className='bg-[#e5e6e9] p-2 rounded-md hover:bg-opacity-70 transition'>
-            <FaEye size={16} />
+          <h6 className='font-semibold'>{openedChatUser?.username}</h6>
+          <button onClick={()=>openModal('openedChatProfile')} className='bg-white shadow-md p-2 rounded-md hover:bg-opacity-70 transition'>
+            <FaEye size={16} className='text-[#735FCD]' />
           </button>
         </div>
       </header>
-      <div className="h-full relative mt-4 p-2 bg-[#e5e6e9] rounded-md">
-        {selectedChatID ?
+      <div className="h-full relative mt-4 p-2 bg-neutral-50 rounded-md">
+        {openedChatUser ?
         <>
           <Messages />
           <div className='absolute bottom-3 right-3 left-3 flex gap-2 items-center'>
@@ -52,7 +52,7 @@ export default function Chat() {
           </div>
         </>
         : 
-        <div className='font-bold max-w-xs mx-auto text-center h-full grid place-content-center'>No message(s) to display! Click on a user on the left to start a chatting!</div>
+        <div className='font-bold max-w-xs mx-auto text-center text-[#735FCD] h-full grid place-content-center'>No message(s) to display! Click on a user on the left to start a chatting!</div>
       }
       </div>
     </div>
