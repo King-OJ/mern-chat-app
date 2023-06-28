@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Search from '../components/Search'
 import Logo from '../components/Logo'
 import { FaBell, FaUser, FaAngleDown } from 'react-icons/fa'
@@ -6,10 +6,11 @@ import ChatList from '../components/ChatList'
 import Chat from '../components/Chat'
 import Modal from '../components/Modal'
 import { useAppContext } from '../context/appContext'
+import Loader from '../components/Loader'
 
 export default function Chats() {
 
-  const { logout, showAlert, user, openedChatUser } = useAppContext()
+  const { logout, showAlert, user, getAllChats, allChatsLoading } = useAppContext()
 
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -33,6 +34,10 @@ export default function Chats() {
     }, 300)
     setModalType('')
     }
+
+    useEffect(() => {
+      getAllChats();
+    }, [])
   
 
   return (
@@ -58,7 +63,7 @@ export default function Chats() {
               </div>
 
               {showLogout && 
-              <div className="bg-[#e5e6e9] text-[#735FCD] rounded-md shadow-lg divide-[#735FCD] divide-y-2 absolute top-9 left-0 right-0">
+              <div className="bg-neutral-50 text-[#735FCD] rounded-md shadow-lg divide-[#735FCD] divide-y-2 absolute top-9 left-0 right-0">
                 <button onClick={()=>openModal('profile')} className="w-full rounded-tl-md rounded-tr-md py-2 text-center  hover:bg-[#cdcdcf] transition duration-200">My Profile</button>
                 <button onClick={async ()=>{ await logout().then((msg)=> showAlert('success', msg) ) }} className="w-full rounded-bl-md rounded-br-md py-2 text-center  hover:bg-[#b5b6b9] transition duration-200">Log out</button>
               </div>}
@@ -73,8 +78,17 @@ export default function Chats() {
 
         <main className='h-[92%]'>
           <div className="my-10 h-full flex gap-8">
-            <ChatList openModal={openModal}  />
-            <Chat openModal={openModal}/>
+            {allChatsLoading ?
+              <div className='h-full gap-4 w-full flex flex-col items-center'>
+                <Loader />
+                <div className='font-semibold'>Getting all your chats!!!</div>
+              </div>
+              :
+              <>
+              <ChatList openModal={openModal}  />
+              <Chat openModal={openModal}/>
+              </>
+              }
           </div>
         </main>
       </div>

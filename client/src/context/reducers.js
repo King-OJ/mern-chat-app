@@ -1,4 +1,4 @@
-import { GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_ERROR, GET_CURRENT_USER_SUCCESS, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG} from "./actions";
+import { GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_ERROR, GET_CURRENT_USER_SUCCESS, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG} from "./actions";
 import { initialState } from "./appContext";
 
 export default function reducer(state, action){
@@ -103,7 +103,7 @@ export default function reducer(state, action){
             
             return {
                 ...state,
-                allUsersLoading: true,
+                searchUsersLoading: true,
             }
         
         
@@ -113,10 +113,34 @@ export default function reducer(state, action){
                     ...state,
                     searchSuggestions: action.payload,
                     allUsers: action.payload,
-                    allUsersLoading: false,
+                    searchUsersLoading: false,
                 }
 
         case GET_ALL_USERS_ERROR:
+            
+            return {
+                    ...state,
+                    searchUsersLoading: false,
+                }
+        
+        
+        case GET_ALL_CHATS_BEGIN:
+            
+            return {
+                ...state,
+                allChatsLoading: true,
+            }
+        
+        
+        case GET_ALL_CHATS_SUCCESS:
+            
+            return {
+                    ...state,
+                    activeChats: action.payload,
+                    allChatsLoading: false,
+                }
+
+        case GET_ALL_CHATS_ERROR:
             
             return {
                     ...state,
@@ -124,10 +148,10 @@ export default function reducer(state, action){
                 }
         
         case SELECT_CHATMATE: 
-        const selectedChat = state.searchSuggestions.find((chat)=> chat._id === action.payload )
-        const searchSuggestions = state.searchSuggestions.filter((chat)=> chat._id !== action.payload)
+        const selectedChat = state.searchSuggestions.find((chat)=> chat._id === action.payload.id )
+        const searchSuggestions = state.searchSuggestions.filter((chat)=> chat._id !== action.payload.id)
         return {
-            ...state, activeChats: [selectedChat, ...state.activeChats ], openedChatUser: selectedChat, search: "", searchSuggestions, selectedChatMateID: action.payload
+            ...state, activeChats: [action.payload.chat, ...state.activeChats ], selectedChatMateID: selectedChat._id , openedChatMate: selectedChat, search: "", searchSuggestions
         }
 
         case LOGOUT_USER:
@@ -135,8 +159,15 @@ export default function reducer(state, action){
             return {...initialState, userError: true, userLoading: false}
 
         case OPEN_CHAT:
-            const openedChatUser = state.activeChats.find((user)=> user._id === action.payload)
-            return {...state, openedChatUser, selectedChatID: action.payload, selectedChatMateID: action.payload}
+            if(action.payload.isGroupChat){
+                const groupMembers = state.activeChats.find((chat)=> chat._id === action.payload.chatId).users
+                const groupName = state.activeChats.find((chat)=> chat._id === action.payload.chatId).chatName
+                const groupAdmin = state.activeChats.find((chat)=> chat._id === action.payload.chatId).groupAdmin
+                return {...state, groupName , groupAdmin, isGroupChat: true, openedChatMate: null, selectedChatID: action.payload.chatId, groupMembers}  
+            }
+            const openedChatMate = state.activeChats.find((chat)=> chat._id === action.payload.chatId).users.find((ele)=> ele._id === action.payload.chatMateId )
+
+            return {...state, groupName: "", groupAdmin: null, isGroupChat: false, groupMembers: [], openedChatMate, selectedChatID: action.payload.chatId, selectedChatMateID: action.payload.chatMateId}
         
 
         default:

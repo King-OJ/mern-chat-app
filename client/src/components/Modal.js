@@ -4,7 +4,7 @@ import FormRow from './FormRow'
 import { useAppContext } from '../context/appContext'
 
 export default function Modal({ closeModal, showModal, modalType }) {
-  const  { user: {username, email, avatar, bio, country}, openedChatUser }  = useAppContext()
+  const  { user: {username, email, avatar, bio, country}, openedChatMate, isGroupChat, groupMembers, groupName, groupAdmin }  = useAppContext()
   return (
     <div className='absolute inset-0 z-10 bg-neutral-800 h-full bg-opacity-60 w-screen'>
         <div className="flex justify-center items-center h-full w-full">
@@ -27,22 +27,45 @@ export default function Modal({ closeModal, showModal, modalType }) {
                 {
                   modalType === 'openedChatProfile' &&
                   
+                  (isGroupChat ?
                   <div className="mt-6 text-center flex flex-col items-center gap-10">
-                    <div>{openedChatUser.username}</div>
-                    <img src={openedChatUser.avatar} alt="person" />
-                    
-                    <div className="text-lg flex flex-col ">Email:<span className='font-semibold'>{openedChatUser.email}</span></div>
-                    <div className="text-lg flex flex-col ">About me:<span className='font-semibold'>{openedChatUser.bio}</span></div>
-                    <div className="text-lg flex flex-col ">Location:<span className='font-semibold'>{openedChatUser.country}</span></div>
+                    <div className='font-semibold tracking-wider'> <span className='font-extrabold'>Group Name :</span> {groupName}</div>
+                    <div className='font-semibold tracking-wider space-y-2'> <span className='font-extrabold'>Group Members :</span> <ul className='flex gap-2 flex-wrap'>
 
-                </div> } 
+                      {groupMembers.map((members)=> {
+                        return (
+                          <li className='px-2 py-1 rounded-md bg-[#ede8f4]'>
+                            {members.username}
+                          </li>
+                        )
+                      })}
+                      </ul> </div>
+                      <div className='font-semibold tracking-wider'> <span className='font-extrabold'>Group Admin :</span><div className='px-2 py-1 text-white rounded-md bg-[#735FCD]'>
+                            {groupAdmin.username}
+                          </div></div>
+                  </div>
+
+                  :
+
+                  <div className="mt-6 text-center flex flex-col items-center gap-10">
+                    <div className='font-semibold tracking-wider'>{openedChatMate.username}</div>
+                    <img src={openedChatMate.avatar} alt="person" />
+                    
+                    <div className="text-lg flex flex-col ">Email:<span className='font-semibold'>{openedChatMate.email}</span></div>
+                    <div className="text-lg flex flex-col ">About me:<span className='font-semibold'>{openedChatMate.bio}</span></div>
+                    <div className="text-lg flex flex-col ">Location:<span className='font-semibold'>{openedChatMate.country}</span></div>
+
+                  </div>
+                  ) 
+                
+                } 
                 {
                  modalType === 'notification' && 
                 <div className="mt-6 flex flex-col items-center gap-10 w-full">
                   <h6 className='font-semibold md:text-xl text-[#735FCD]'>Notifications</h6>
                   <ul className='w-full space-y-3'>
-                    <li className='p-2 bg-[#735FCD] text-white font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> Welcome to my chat app. This is a fullstack MERN App.</li>
-                    <li className='p-2 bg-[#735FCD] text-white font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> This appliction was built by Clement Ojiguo</li>
+                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> Welcome to my chat app. This is a fullstack MERN App.</li>
+                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> This appliction was built by Clement Ojiguo</li>
                   </ul>
                 </div>
                 }

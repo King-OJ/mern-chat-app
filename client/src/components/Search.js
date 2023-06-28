@@ -4,7 +4,7 @@ import { useAppContext } from '../context/appContext'
 
 export default function Search() {
 
-const { search , handleSearchChng, searchUsers, searchSuggestions, selectChatMate, allUsersLoading} = useAppContext()
+const { search , handleSearchChng, searchUsers, searchSuggestions, selectChatMate, searchUsersLoading} = useAppContext()
 
 const [localSearch, setLocalSearch] = useState('')
 
@@ -40,7 +40,7 @@ useEffect(() => {
         search &&
             <ul className={"absolute w-full flex gap-3 top-12 left-0 p-2 rounded-lg flex-wrap bg-white overflow-x-auto max-w-md"}>
                 {
-                    allUsersLoading ?  <div className='mx-auto'><Loader /></div> :
+                    searchUsersLoading ?  <div className='mx-auto'><Loader /></div> :
                     searchSuggestions.length > 0 ? searchSuggestions.map((suggestion, index)=>{
                         return <button onClick={()=> selectChatMate(suggestion._id) } key={index} className='bg-[#735FCD] flex items-center rounded-md text-white font-semibold px-1 py-[1px] text-xs'>{suggestion.username}</button>
                     })

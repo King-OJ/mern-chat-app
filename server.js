@@ -20,6 +20,7 @@ import errorHandlerMiddleware from './middlewares/errorHandler.js';
 //routes
 import authRouter from './routes/user.js'
 import chatRouter from './routes/chat.js'
+import messageRouter from './routes/message.js'
 
 //database
 import connectDB from './db/connectDB.js';
@@ -46,6 +47,7 @@ app.use(cookieParser())
 //auth routes
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/chat', chatRouter)
+app.use('/api/v1/message', messageRouter)
 
 //error for undefined routes
 app.use(notFoundMiddleware)

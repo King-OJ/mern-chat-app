@@ -5,7 +5,7 @@ import User from "../models/user.js"
 
 export const accessChat = async (req, res)=>{
     // console.log(req.params);
-    const { id: userId } = req.params
+    const { id: userId  } = req.body
     
     if( !userId ){
         throw new BadRequestError('User ID not sent with request')
@@ -65,7 +65,7 @@ export const fetchChats = async (req, res)=>{
     
     chats = await User.populate(chats, {
         path: "latestMessage.sender",
-        select: "name email avatar"
+        select: "name email avatar bio"
     })
     // console.log(chats);
     

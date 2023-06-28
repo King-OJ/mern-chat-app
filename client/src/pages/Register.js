@@ -73,7 +73,7 @@ export default function Register() {
                 {/*front child box */}
                 <div className="hidden sm:block w-[40%] rounded-tl-md rounded-bl-md px-2 sm:px-6 md:px-12 text-white h-full bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]" >
                   <div className="flex h-full flex-col justify-center space-y-6 sm:space-y-10 md:space-y-14">
-                    <img src={walkingImg} alt="walking" />
+                    <img src={walkingImg} alt="walking" className='flip-img' />
                     {
                       features.map((feature, i)=> {
                         return (

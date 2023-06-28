@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useReducer} from "react";
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import reducer from "./reducers";
-import {  GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG } from "./actions";
+import {  GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG } from "./actions";
 import { GET_CURRENT_USER_SUCCESS } from "./actions";
 import { GET_CURRENT_USER_BEGIN } from "./actions";
 import { useNavigate } from "react-router-dom";
@@ -15,93 +15,22 @@ export const initialState = {
     search: '',
     searchSuggestions: [],
     userLoading: false,
-    allUsersLoading: false,
+    searchUsersLoading: false,
+    allChatsLoading: false,
     formLoading: false,
-    openedChatUser: null,
+    openedChatMate: null,
     activeChatMate: null,
     notifications: null,
     newMsg: '',
+    isGroupChat: false,
+    groupName: "",
+    groupAdmin: null,
+    groupMembers: [],
     selectedChatMateID: '',
     selectedChatID: '',
     activeChats: [],
-    allUsers: [],
     messages: [
-        {
-            myText: true,
-            text: 'Hello Clem'
-        },
-        {
-            myText: false,
-            text: 'How are you?'
-        },
-        {
-            myText: true,
-            text: 'I dey alright oh'
-        },
-        {
-            myText: false,
-            text: 'You just forget ur guy'
-        },
-        {
-            myText: true,
-            text: 'Obob wahala too much oh i no forget u'
-        },
-        {
-            myText: false,
-            text: 'I swear everybody dey collect this period'
-        },
-        {
-            myText: true,
-            text: 'I tell u oh, haha'
-        },
-        {
-            myText: false,
-            text: 'How your family na watin dey happen?'
-        },
-        {
-            myText: true,
-            text: 'Family is well boss, just one issue to the other, you know as e dey go na'
-        },
-        {
-            myText: false,
-            text: 'Omor U nor need to tell me oh'
-        },
-        {
-            myText: true,
-            text: 'To be a man is not a day job na'
-        },
-        {
-            myText: false,
-            text: 'U dey feel me ba'
-        },
-        {
-            myText: true,
-            text: 'I dey feel u die ma guy, who nor go nor know na'
-        },
-        {
-            myText: false,
-            text: 'That is, u dey get am clear my G'
-        },
-        {
-            myText: true,
-            text: 'Abeg where u dey go today make I follow u'
-        },
-        {
-            myText: false,
-            text: 'Oboy na Area 1 for apo oh'
-        },
-        {
-            myText: true,
-            text: 'but 2 guys done buzz me to follow that route still on the slabbing'
-        },
-        {
-            myText: false,
-            text: 'but 2 guys done buzz me to follow that route still on the slabbing'
-        },
-        {
-            myText: false,
-            text: 'haha, legezy tins oh'
-        },
+        
     ]
 }
 
@@ -216,7 +145,7 @@ export function AppProvider ({ children }){
         }
     }
 
-    //get all users
+    //search for chatmate
     const searchUsers = async ()=>{  
         let url= `/auth/getUsers?search=${state.search}`
         dispatch({ type: GET_ALL_USERS_BEGIN})
@@ -228,6 +157,19 @@ export function AppProvider ({ children }){
             showAlert('error', 'Something went wrong! Try again!')
             dispatch({ type: GET_ALL_USERS_ERROR}) 
         } 
+    }
+
+    //fetch all chats
+    const getAllChats = async ()=>{
+        dispatch({ type: GET_ALL_CHATS_BEGIN})
+        try {
+            const response = await authFetch.get('/chat')
+            const { data : { chats } } = response
+            dispatch({ type: GET_ALL_CHATS_SUCCESS, payload: chats})
+        } catch (error) {
+            console.log(error);
+            dispatch({ type: GET_ALL_CHATS_ERROR, payload: error.response.msg })
+        }
     }
 
 
@@ -247,13 +189,20 @@ export function AppProvider ({ children }){
     }
 
     //select a chatmate
-    const selectChatMate = (id)=>{
-        dispatch({ type: SELECT_CHATMATE, payload: id })
+    const selectChatMate = async (id)=>{
+        try {
+            const response = await authFetch.post('/chat', { id })
+            const { data : { chat } } = response
+            dispatch({ type: SELECT_CHATMATE, payload: {chat, id }})
+
+        } catch (error) {
+            toast.error(error.response.msg)
+        }
     }
 
     //to open a chat
-    const openChat = (chatId)=>{
-        dispatch({type: OPEN_CHAT, payload: chatId})
+    const openChat = (chatId, chatMateId, isGroupChat)=>{
+        dispatch({type: OPEN_CHAT, payload: {chatId, chatMateId, isGroupChat}})
     }
 
 
@@ -266,6 +215,7 @@ export function AppProvider ({ children }){
             handleSearchChng,
             sendMsg, 
             getCurrentUser,
+            getAllChats,
             logout,
             openChat,
             searchUsers,
