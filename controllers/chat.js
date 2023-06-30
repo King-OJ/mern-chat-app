@@ -65,7 +65,7 @@ export const fetchChats = async (req, res)=>{
     
     chats = await User.populate(chats, {
         path: "latestMessage.sender",
-        select: "name email avatar bio"
+        select: "username email avatar bio"
     })
     // console.log(chats);
     

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useReducer} from "react";
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import reducer from "./reducers";
-import {  GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG } from "./actions";
+import {  GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_ERROR, GET_MSG_BEGIN, GET_MSG_ERROR, GET_MSG_SUCCESS, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG_BEGIN, SEND_MSG_SUCCESS } from "./actions";
 import { GET_CURRENT_USER_SUCCESS } from "./actions";
 import { GET_CURRENT_USER_BEGIN } from "./actions";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,7 @@ export const initialState = {
     activeChatMate: null,
     notifications: null,
     newMsg: '',
+    messagesLoading: false,
     isGroupChat: false,
     groupName: "",
     groupAdmin: null,
@@ -29,6 +30,7 @@ export const initialState = {
     selectedChatMateID: '',
     selectedChatID: '',
     activeChats: [],
+    latestMessages: [],
     messages: [
         
     ]
@@ -165,7 +167,7 @@ export function AppProvider ({ children }){
         try {
             const response = await authFetch.get('/chat')
             const { data : { chats } } = response
-            dispatch({ type: GET_ALL_CHATS_SUCCESS, payload: chats})
+            dispatch({ type: GET_ALL_CHATS_SUCCESS, payload: { chats }})
         } catch (error) {
             console.log(error);
             dispatch({ type: GET_ALL_CHATS_ERROR, payload: error.response.msg })
@@ -184,8 +186,30 @@ export function AppProvider ({ children }){
     }
 
     //send msg
-    const sendMsg = ()=>{
-        dispatch({ type:SEND_MSG })
+    const getMessages = async (chatId)=>{
+        dispatch({ type:GET_MSG_BEGIN })
+        try {
+        const response = await authFetch.get(`/message/${chatId}`)
+        const { data : { messages } } = response
+        dispatch({ type:GET_MSG_SUCCESS, payload: messages })
+        } catch (error) {
+         dispatch({ type:GET_MSG_ERROR})
+         toast.error(error.response.msg)
+        }
+    }
+
+    //send msg
+    const sendMsg = async ()=>{
+        dispatch({ type:SEND_MSG_BEGIN })
+        try {
+        const response = await authFetch.post('/message', { message:state.newMsg, chatId: state.selectedChatID  })
+        const { data : { newMessage } } = response
+        // console.log(newMessage);
+        dispatch({ type:SEND_MSG_SUCCESS, payload: newMessage })
+        } catch (error) {
+         console.log(error);
+         toast.error(error.response.msg)
+        }
     }
 
     //select a chatmate
@@ -203,6 +227,7 @@ export function AppProvider ({ children }){
     //to open a chat
     const openChat = (chatId, chatMateId, isGroupChat)=>{
         dispatch({type: OPEN_CHAT, payload: {chatId, chatMateId, isGroupChat}})
+        getMessages(chatId)
     }
 
 

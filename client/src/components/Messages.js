@@ -15,7 +15,7 @@ export default function Messages() {
         <div className="flex flex-col gap-3">
             {
                 messages.map((message, i)=>{
-                    return <SingleMessageBox key={i} myText={message.myText} message={message.text}/>
+                    return <SingleMessageBox key={i} message={message}/>
                 })
             }
             <div id={'el'} ref={el} />  

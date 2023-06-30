@@ -1,4 +1,4 @@
-import { GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_ERROR, GET_CURRENT_USER_SUCCESS, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG} from "./actions";
+import { GET_ALL_CHATS_BEGIN, GET_ALL_CHATS_ERROR, GET_ALL_CHATS_SUCCESS, GET_ALL_USERS_BEGIN, GET_ALL_USERS_ERROR, GET_ALL_USERS_SUCCESS, GET_CURRENT_USER_BEGIN, GET_CURRENT_USER_ERROR, GET_CURRENT_USER_SUCCESS, GET_MSG_BEGIN, GET_MSG_ERROR, GET_MSG_SUCCESS, HANDLE_MSG_CHANGE, HANDLE_SEARCH_CHANGE, LOGIN_USER_BEGIN, LOGIN_USER_ERROR, LOGIN_USER_SUCCESS, LOGOUT_USER, OPEN_CHAT, REGISTER_USER_BEGIN, REGISTER_USER_ERROR, REGISTER_USER_SUCCESS, SELECT_CHATMATE, SEND_MSG_BEGIN, SEND_MSG_SUCCESS} from "./actions";
 import { initialState } from "./appContext";
 
 export default function reducer(state, action){
@@ -61,14 +61,37 @@ export default function reducer(state, action){
                 search: action.payload
             }
 
-        case SEND_MSG:
-            const msg = { text: state.newMsg, myText: true}
+        case SEND_MSG_BEGIN:
+            
+            return {
+                ...state,
+                newMsg: ''
+            }
+        case SEND_MSG_SUCCESS:
+            
+            return {
+                ...state,
+                messages: [...state.messages, action.payload],
+                newMsg: ''
+            }
+
+        case GET_MSG_BEGIN:        
+            return {
+                ...state,
+                messagesLoading: true,
+            }
+        case GET_MSG_SUCCESS:
             
             
             return {
                 ...state,
-                messages: [...state.messages, msg],
-                newMsg: ''
+                messages: action.payload,
+                messagesLoading: false,
+            }
+        case GET_MSG_ERROR:      
+            return {
+                ...state,
+                messagesLoading: false,
             }
         
         
@@ -133,10 +156,15 @@ export default function reducer(state, action){
         
         
         case GET_ALL_CHATS_SUCCESS:
-            
+            const { chats } = action.payload
+            const latestMessages = []
+            chats.forEach((chat)=>{
+                if(chat.latestMessage) latestMessages.push(chat.latestMessage)
+            })
             return {
                     ...state,
-                    activeChats: action.payload,
+                    activeChats: chats,
+                    latestMessages,
                     allChatsLoading: false,
                 }
 
@@ -150,8 +178,14 @@ export default function reducer(state, action){
         case SELECT_CHATMATE: 
         const selectedChat = state.searchSuggestions.find((chat)=> chat._id === action.payload.id )
         const searchSuggestions = state.searchSuggestions.filter((chat)=> chat._id !== action.payload.id)
+        const chatAlreadyExist = state.activeChats.find((chat)=> chat._id === action.payload.chat._id)
+        if (chatAlreadyExist){
+            return {
+                ...state ,selectedChatMateID: chatAlreadyExist.users.find((user)=> user._id !== state.user._id)._id , selectedChatID: chatAlreadyExist._id, openedChatMate: chatAlreadyExist.users.find((user)=> user._id !== state.user._id), search: "", searchSuggestions
+            } 
+        }
         return {
-            ...state, activeChats: [action.payload.chat, ...state.activeChats ], selectedChatMateID: selectedChat._id , openedChatMate: selectedChat, search: "", searchSuggestions
+            ...state, activeChats: [action.payload.chat, ...state.activeChats ], selectedChatMateID: selectedChat._id , selectedChatID: action.payload.chat._id , openedChatMate: selectedChat, search: "", searchSuggestions
         }
 
         case LOGOUT_USER:

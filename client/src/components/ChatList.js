@@ -2,11 +2,12 @@ import React from 'react'
 import { FaPlus } from 'react-icons/fa'
 import ChatIcon from './ChatIcon'
 import { useAppContext } from '../context/appContext'
+import Loader from './Loader'
 
 export default function ChatList( { openModal }) {
 
-  const { openChat, activeChats, selectedChatID, user } = useAppContext()
-  
+  const { openChat, activeChats, selectedChatID, user, allChatsLoading } = useAppContext()
+  // console.log(activeChats);
 
   return (
     <div className='hidden lg:block w-[35%] h-[90%]'>
@@ -18,17 +19,26 @@ export default function ChatList( { openModal }) {
       </header>
 
       <ul className="overflow-y-auto h-full mt-4 p-2 bg-white rounded-md shadow-md space-y-3 mb-10">
+      {allChatsLoading ?
+              <div className='h-full gap-4 w-full flex justify-center flex-col items-center'>
+                <Loader />
+                <div className='font-semibold'>Getting all your chats!!!</div>
+              </div>
+              :
         
-          { activeChats.length > 0 ? activeChats.map((chat,i)=> {
+           activeChats.length > 0 ? activeChats.map((chat,i)=> {
             let chatMate
-            if(chat.isGroupChat){
-
-            }
             chatMate = chat.users.find((chatMate) => chatMate._id !== user._id )
             
             return (
               <li key={i} className="w-full" onClick={()=>{openChat(chat._id, chatMate._id, chat.isGroupChat)}}>
-                <button className={chat._id === selectedChatID ? "text-left px-2 py-3 text-white bg-[#735FCD] w-full rounded-md flex justify-between self-center  font-semibold": "text-left px-2 py-3 transition hover:bg-[#735FCD] hover:text-white bg-[#ede8f4] w-full rounded-md flex justify-between self-center  font-semibold"}><div className='flex gap-2'><ChatIcon user={chatMate} />{chat.isGroupChat ? chat.chatName : chatMate.username}</div> {chat.isGroupChat && <div className='italic text-xs justify-end self-end'>Group Chat</div>}</button>
+                <button className={chat._id === selectedChatID ? "text-left px-2 py-3 text-white bg-[#735FCD] h-full w-full rounded-md flex justify-between self-center  font-semibold": "text-left px-2 py-3 transition hover:bg-[#735FCD] hover:text-white bg-[#ede8f4] w-full rounded-md flex justify-between self-center  font-semibold"}>
+                  <div className='flex flex-col gap-2'>
+                    <div className='flex gap-2'><ChatIcon user={chatMate} />{chat.isGroupChat ? chat.chatName : chatMate.username}</div>
+                  {chat.latestMessage ? (chat.latestMessage.sender._id !== user._id)  && <div className='text-sm opacity-70'><span>{chat.isGroupChat && `${chat.latestMessage.sender.username} : `}</span> {chat.latestMessage.message}</div> : <span></span>}
+                  </div>
+                   {chat.isGroupChat && <div className='italic text-xs justify-end self-end'>Group Chat</div>}</button>
+                
               </li>
             )
           }):

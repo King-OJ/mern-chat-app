@@ -33,6 +33,7 @@ export const sendMessage = async (req, res) => {
 
 export const allMessages = async (req, res)=> {
     const { chatId } = req.params
+    // console.log(chatId);
     const messages = await Message.find({ chat: chatId }).populate("sender", "username avatar email").populate("chat")
     res.status(StatusCodes.OK).json({ messages })
 

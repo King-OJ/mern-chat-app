@@ -38,7 +38,7 @@ useEffect(() => {
         
         {   
         search &&
-            <ul className={"absolute w-full flex gap-3 top-12 left-0 p-2 rounded-lg flex-wrap bg-white overflow-x-auto max-w-md"}>
+            <ul className={"absolute w-full flex gap-3 top-12 left-0 p-2 rounded-lg flex-wrap bg-white overflow-x-auto max-w-md z-20"}>
                 {
                     searchUsersLoading ?  <div className='mx-auto'><Loader /></div> :
                     searchSuggestions.length > 0 ? searchSuggestions.map((suggestion, index)=>{

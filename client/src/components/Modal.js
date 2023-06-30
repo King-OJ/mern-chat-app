@@ -1,10 +1,13 @@
-import React from 'react'
-import { FaBell, FaTimes } from 'react-icons/fa'
+import React, { useState } from 'react'
+import { FaBell, FaTimes, FaAngleDown} from 'react-icons/fa'
 import FormRow from './FormRow'
 import { useAppContext } from '../context/appContext'
 
 export default function Modal({ closeModal, showModal, modalType }) {
   const  { user: {username, email, avatar, bio, country}, openedChatMate, isGroupChat, groupMembers, groupName, groupAdmin }  = useAppContext()
+  
+  const [openSubList, setOpenSubList] = useState("")
+
   return (
     <div className='absolute inset-0 z-10 bg-neutral-800 h-full bg-opacity-60 w-screen'>
         <div className="flex justify-center items-center h-full w-full">
@@ -16,7 +19,7 @@ export default function Modal({ closeModal, showModal, modalType }) {
                   modalType === 'profile' &&
                   
                   <div className="mt-6 text-center flex flex-col items-center gap-10">
-                    <div>{username}</div>
+                    <div className='font-extrabold text-lg tracking-widest'>{username}</div>
                     <img src={avatar} alt="person" />
                     
                     <div className="text-lg flex flex-col ">Email:<span className='font-semibold'>{email}</span></div>
@@ -30,12 +33,28 @@ export default function Modal({ closeModal, showModal, modalType }) {
                   (isGroupChat ?
                   <div className="mt-6 text-center flex flex-col items-center gap-10">
                     <div className='font-semibold tracking-wider'> <span className='font-extrabold'>Group Name :</span> {groupName}</div>
-                    <div className='font-semibold tracking-wider space-y-2'> <span className='font-extrabold'>Group Members :</span> <ul className='flex gap-2 flex-wrap'>
+                    <div className='font-semibold tracking-wider space-y-2'> <span className='font-extrabold'>Group Members :</span> <ul className='flex gap-4 flex-wrap' >
 
-                      {groupMembers.map((members)=> {
+                      {groupMembers.map((member)=> {
                         return (
-                          <li className='px-2 py-1 rounded-md bg-[#ede8f4]'>
-                            {members.username}
+                          <li className='relative px-2 py-1 rounded-md bg-[#ede8f4]'>
+                              <button className="flex items-center gap-2" onClick={()=>{
+                                if(openSubList){
+                                  setOpenSubList("")
+                                  return;
+                                }
+                                setOpenSubList(member._id)
+                                }}>
+                                {member.username}
+                                <FaAngleDown />
+                              </button>
+                              {
+                                openSubList === member._id &&
+                                <div className="absolute top-10 min-w-[160px]">
+                                  <button className="text-sm w-full bg-white px-2 py-1  hover:bg-neutral-200 rounded-md shadow-md z-30">Remove from group?</button>
+                                </div>
+                              }
+
                           </li>
                         )
                       })}
@@ -48,7 +67,7 @@ export default function Modal({ closeModal, showModal, modalType }) {
                   :
 
                   <div className="mt-6 text-center flex flex-col items-center gap-10">
-                    <div className='font-semibold tracking-wider'>{openedChatMate.username}</div>
+                    <div className='font-extrabold text-lg tracking-widest'>{openedChatMate.username}</div>
                     <img src={openedChatMate.avatar} alt="person" />
                     
                     <div className="text-lg flex flex-col ">Email:<span className='font-semibold'>{openedChatMate.email}</span></div>
