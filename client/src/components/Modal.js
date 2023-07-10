@@ -18,7 +18,7 @@ export default function Modal({ closeModal, showModal, modalType }) {
                 {
                   modalType === 'profile' &&
                   
-                  <div className="mt-6 text-center flex flex-col items-center gap-10">
+                  <div className="mt-6 text-center flex flex-col items-center space-y-8">
                     <div className='font-extrabold text-lg tracking-widest'>{username}</div>
                     <img src={avatar} alt="person" />
                     
@@ -31,15 +31,15 @@ export default function Modal({ closeModal, showModal, modalType }) {
                   modalType === 'openedChatProfile' &&
                   
                   (isGroupChat ?
-                  <div className="mt-6 text-center flex flex-col items-center gap-10">
+                  <div className="mt-6 text-center flex flex-col items-center space-y-10">
                     <div className='font-semibold tracking-wider'> <span className='font-extrabold'>Group Name :</span> {groupName}</div>
-                    <div className='font-semibold tracking-wider space-y-2'> <span className='font-extrabold'>Group Members :</span> <ul className='flex gap-4 flex-wrap' >
+                    <div className='font-semibold tracking-wider space-y-2'> <span className='font-extrabold'>Group Members :</span> <ul className='flex space-x-4 flex-wrap' >
 
                       {groupMembers.map((member)=> {
                         return (
                           <li className='relative px-2 py-1 rounded-md bg-[#ede8f4]'>
-                              <button className="flex items-center gap-2" onClick={()=>{
-                                if(openSubList){
+                              <button className="flex items-center space-x-2" onClick={()=>{
+                                if(openSubList && openSubList === member._id){
                                   setOpenSubList("")
                                   return;
                                 }
@@ -66,7 +66,7 @@ export default function Modal({ closeModal, showModal, modalType }) {
 
                   :
 
-                  <div className="mt-6 text-center flex flex-col items-center gap-10">
+                  <div className="mt-6 text-center flex flex-col items-center space-y-10">
                     <div className='font-extrabold text-lg tracking-widest'>{openedChatMate.username}</div>
                     <img src={openedChatMate.avatar} alt="person" />
                     
@@ -80,18 +80,18 @@ export default function Modal({ closeModal, showModal, modalType }) {
                 } 
                 {
                  modalType === 'notification' && 
-                <div className="mt-6 flex flex-col items-center gap-10 w-full">
+                <div className="mt-6 flex flex-col items-center space-y-10 w-full">
                   <h6 className='font-semibold md:text-xl text-[#735FCD]'>Notifications</h6>
                   <ul className='w-full space-y-3'>
-                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> Welcome to my chat app. This is a fullstack MERN App.</li>
-                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center gap-3'><FaBell /> This appliction was built by Clement Ojiguo</li>
+                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center'><FaBell className='mr-6'/> Welcome to my chat app. This is a fullstack MERN App.</li>
+                    <li className='p-2 bg-[#ede8f4] font-semibold rounded-md w-full flex items-center'><FaBell className='mr-6'/> This appliction was built by Clement Ojiguo</li>
                   </ul>
                 </div>
                 }
 
                 {
                  modalType === 'newGroupChat' && 
-                <div className="mt-6 flex flex-col items-center gap-10 w-full">
+                <div className="mt-6 flex flex-col items-center space-y-10 w-full">
                   <h6 className='font-semibold md:text-xl text-[#735FCD]'>Create Group Chat</h6>
                   <form action="
                   " className="w-full space-y-8">

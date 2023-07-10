@@ -68,7 +68,7 @@ export default function Register() {
             
               
               {/* front */}
-              <div className="absolute inset-4 flex front">
+              <div className="absolute top-4 bottom-4 left-4 right-4 flex front">
                 
                 {/*front child box */}
                 <div className="hidden sm:block w-[40%] rounded-tl-md rounded-bl-md px-2 sm:px-6 md:px-12 text-white h-full bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]" >
@@ -77,7 +77,7 @@ export default function Register() {
                     {
                       features.map((feature, i)=> {
                         return (
-                          <div key={i} className="text-center flex flex-col gap-1 sm:gap-2 ">
+                          <div key={i} className="text-center flex flex-col space-y-1 sm:space-y-2 ">
                             <div className='text-[#F4F3FB] font-semibold text-xs sm:text-sm md:text-lg'>{feature.title}</div>
                             <div className='text-[#F4F3FB] text-xs sm:text-sm md:text-base'>{feature.desc}</div>
                           </div>
@@ -96,8 +96,8 @@ export default function Register() {
                     <FormRow label='username' name='username' type='text' value={visitor.username} handleChange={handleChange}/>
                     <FormRow id='loginEmail'  label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow id='loginPassword' label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
-                    <div className="text-xs sm:text-sm text-[#84899C] flex gap-1">Already have an account?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Login</span></div>
-                    <button disabled={formLoading} type='submit' className='flex gap-2 items-center justify-center bg-gradient-to-br from-[#BFA1EA] to-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account {formLoading && <Loader />}</button>
+                    <div className="text-xs sm:text-sm text-[#84899C] justify-start grid grid-flow-col gap-3">Already have an account?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Login</span></div>
+                    <button disabled={formLoading} type='submit' className='flex space-x-2 items-center justify-center bg-gradient-to-br from-[#BFA1EA] to-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Create Account {formLoading && <Loader />}</button>
                     </div>
                   </form>
                 </div>
@@ -105,7 +105,7 @@ export default function Register() {
               </div>
 
               {/* back */}
-              <div className="absolute inset-4 flex flex-row-reverse back">
+              <div className="absolute top-4 bottom-4 left-4 right-4 flex flex-row-reverse back">
                 
                 {/* back child box */}
                 <div className="hidden sm:block w-[40%] rounded-tr-md rounded-br-md px-2 sm:px-6 md:px-12 text-white h-full bg-gradient-to-br from-[#BFA1EA] to-[#735FCD]" >
@@ -132,8 +132,8 @@ export default function Register() {
                     <div className="space-y-10 md:space-y-14">
                     <FormRow label='email' name='email' type='email' value={visitor.email} handleChange={handleChange}/>
                     <FormRow label='password' name='password' type='password' value={visitor.password} handleChange={handleChange}/>
-                    <div className="text-xs sm:text-sm text-[#84899C] flex  gap-1">Don't have an account yet?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Sign Up</span></div>
-                    <button disabled={formLoading} type='submit' className='flex gap-2 items-center justify-center bg-gradient-to-br from-[#BFA1EA] to-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login {formLoading && <Loader />}</button>
+                    <div className="text-xs sm:text-sm text-[#84899C] justify-start grid grid-flow-col gap-3">Don't have an account yet?<span className='cursor-pointer  bg-[#BFA1EA] text-white py-[3px] px-2 text-xs font-semibold rounded-lg animate-bounce' onClick={()=>setVisitor({...visitor, isMember: !visitor.isMember}) }>Sign Up</span></div>
+                    <button disabled={formLoading} type='submit' className='flex space-x-2 items-center justify-center bg-gradient-to-br from-[#BFA1EA] to-[#735FCD] disabled:cursor-wait text-sm md:text-base font-semibold text-white rounded-md shadow-lg w-full py-[6px] sm:py-2 md:py-3 tracking-wider'>Login {formLoading && <Loader />}</button>
                     </div>
                   </form>
                 </div>

@@ -50,10 +50,10 @@ export default function Chats() {
               <Search />
             </div>
             <Logo />
-            <div className="flex gap-3 items-center relative">
+            <div className="grid grid-flow-col gap-3 items-center relative">
               <button onClick={()=>openModal('notification')} className='text-[#735FCD]'><FaBell size={22}/></button>
 
-              <div onClick={()=>setShowLogout(!showLogout)} className="flex gap-2 items-center px-3 py-[3px] rounded-md bg-white shadow-md  hover:bg-opacity-70 transition duration-200">
+              <div onClick={()=>setShowLogout(!showLogout)} className="flex space-x-2 items-center px-3 py-[3px] rounded-md bg-white shadow-md  hover:bg-opacity-70 transition duration-200">
                 <button className="bg-[#e5e6e9] grid place-content-center overflow-hidden h-4 w-4 md:h-6 md:w-6 rounded-full">
                   <FaUser size={22} className='mt-1 text-[#735FCD]'/>
                 </button>
@@ -77,7 +77,7 @@ export default function Chats() {
         </header>
 
         <main className='h-[92%]'>
-          <div className="my-10 h-full flex gap-8">
+          <div className="py-10 h-[90%] grid grid-cols-3 gap-6">
             
               
               <ChatList openModal={openModal}  />

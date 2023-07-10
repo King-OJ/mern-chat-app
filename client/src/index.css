@@ -37,9 +37,16 @@ transition: background-color 5000s ease-in-out 0s;
 
 .front, 
 .back {
-    -webkit-backface-visibility: hidden; /* Safari */
+    -webkit-perspective: 0;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translate3d(0,0,0);
+    visibility:visible;
     backface-visibility: hidden;
+    /* height: 100%; */
   }
+
+
+ 
 
 .back {
   transform: rotateY(180deg);
@@ -52,6 +59,16 @@ transition: background-color 5000s ease-in-out 0s;
 .messages {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+.singleMessage::before {
+  content: "";
+  width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	border-right: 50px solid #555;
+	border-bottom: 25px solid transparent;
+  /* background-color: red; */
 }
 
 /* Loader */
@@ -73,6 +90,18 @@ transition: background-color 5000s ease-in-out 0s;
   100% { transform: rotate(360deg); }
 }
 
+/* .tri-left {
+  content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+  left: -40px;
+	right: auto;
+  top: -8px;
+	bottom: auto;
+	border: 32px solid;
+	border-color: #666 transparent transparent transparent;
+} */
 
 
 
